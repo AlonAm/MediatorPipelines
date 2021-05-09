@@ -1,4 +1,6 @@
-﻿using MediatR;
+﻿using FluentValidation;
+using MediatR;
+using System;
 using System.Threading;
 using System.Threading.Tasks;
 
@@ -8,6 +10,17 @@ namespace MediatorPipelines
     public class Ping : IRequest<Pong>
     {
         public string Message { get; set; }
+    }
+
+    // Validator
+    public class PingValidator : AbstractValidator<Ping>
+    {
+        public PingValidator()
+        {
+            RuleFor(v => v.Message)
+                .MaximumLength(255)
+                .NotEmpty();
+        }
     }
 
     // Response
@@ -21,6 +34,8 @@ namespace MediatorPipelines
     {
         public Task<Pong> Handle(Ping request, CancellationToken cancellationToken)
         {
+            Console.WriteLine("Executing request");
+
             var response = new Pong { Message = request.Message + " Pong" };
 
             return Task.FromResult(response);

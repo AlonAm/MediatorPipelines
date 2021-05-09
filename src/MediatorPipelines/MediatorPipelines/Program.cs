@@ -1,7 +1,10 @@
-﻿using MediatR;
+﻿using FluentValidation;
+using MediatorPipelines.Behaviors;
+using MediatR;
 using MediatR.Pipeline;
 using SimpleInjector;
 using System;
+using System.Collections.Generic;
 using System.Reflection;
 using System.Threading.Tasks;
 
@@ -11,7 +14,9 @@ namespace MediatorPipelines
     {
         static async Task Main()
         {
+            // Dependency Injection
             var container = new Container();
+            container.Register(() => new ServiceFactory(container.GetInstance), Lifestyle.Singleton);
 
             var assemblies = new[]
             {
@@ -25,31 +30,51 @@ namespace MediatorPipelines
             // Handlers
             container.Register(typeof(IRequestHandler<,>), assemblies);
 
-            // Dependency Injection
-            container.Register(() => new ServiceFactory(container.GetInstance), Lifestyle.Singleton);
-
             // Pipeline
             container.Collection.Register(typeof(IPipelineBehavior<,>), new[]
             {
+                typeof(LoggingBehavior<,>),
+                typeof(ValidationBehavior<,>),
                 typeof(RequestPreProcessorBehavior<,>),
                 typeof(RequestPostProcessorBehavior<,>),
             });
 
             // Processors 
-            container.Collection.Register(typeof(IRequestPreProcessor<>), new[] { typeof(GenericRequestPreProcessor<>) });
-            container.Collection.Register(typeof(IRequestPostProcessor<,>), new[] { typeof(GenericRequestPostProcessor<,>), typeof(ConstrainedRequestPostProcessor<,>) });
+            RegisterCollection(container, typeof(IRequestPreProcessor<>), assemblies);
+            RegisterCollection(container, typeof(IRequestPostProcessor<,>), assemblies);
+
+            // Validators
+            RegisterCollection(container, typeof(IValidator<>), assemblies);
+
+            container.Verify();
 
             // Run it!
 
             var mediator = container.GetInstance<IMediator>();
 
+            var oneWayCommand = new OneWayCommand();
+
+            await mediator.Send(oneWayCommand);
+
             var ping = new Ping { Message = "Ping" };
 
             var pong = await mediator.Send(ping);
-            
-            Console.WriteLine(pong.Message); // "Ping Pong"
+
+            Console.WriteLine("Result: {0}", pong.Message); // "Ping Pong"
 
             Console.ReadLine();
+        }
+
+        private static void RegisterCollection(Container container, Type collectionType, IReadOnlyCollection<Assembly> assemblies)
+        {
+            // we have to do this because by default, generic type definitions (such as the Constrained Notification Handler) won't be registered
+            var handlerTypes = container.GetTypesToRegister(collectionType, assemblies, new TypesToRegisterOptions
+            {
+                IncludeGenericTypeDefinitions = true,
+                IncludeComposites = false,
+            });
+
+            container.Collection.Register(collectionType, handlerTypes);
         }
     }
 }

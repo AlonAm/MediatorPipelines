@@ -1,4 +1,5 @@
 ﻿using MediatR.Pipeline;
+using System;
 using System.Threading;
 using System.Threading.Tasks;
 
@@ -9,6 +10,8 @@ namespace MediatorPipelines
     {
         public Task Process(TRequest request, TResponse response, CancellationToken cancellationToken)
         {
+            Console.WriteLine("Constrained Post Processor");
+
             return Task.CompletedTask;
         }
     }
