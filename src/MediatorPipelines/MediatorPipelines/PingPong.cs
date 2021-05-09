@@ -34,7 +34,7 @@ namespace MediatorPipelines
     {
         public Task<Pong> Handle(Ping request, CancellationToken cancellationToken)
         {
-            Console.WriteLine("Executing request");
+            Console.WriteLine("....Executing ping-pong request");
 
             var response = new Pong { Message = request.Message + " Pong" };
 

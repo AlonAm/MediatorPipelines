@@ -9,7 +9,7 @@ namespace MediatorPipelines
     {
         public Task Process(TRequest request, CancellationToken cancellationToken)
         {
-            Console.WriteLine("Pre Processor");
+            Console.WriteLine("..Pre Processor");
 
             return Task.CompletedTask;
         }
