@@ -31,7 +31,7 @@ namespace MediatorPipelines
             // Handlers
             container.Register(typeof(IRequestHandler<,>), assemblies);
 
-            // Pipeline
+            // Pipeline (Manual)
             container.Collection.Register(typeof(IPipelineBehavior<,>), new[]
             {
                 typeof(LoggingBehavior<,>),
@@ -40,12 +40,12 @@ namespace MediatorPipelines
                 typeof(RequestPostProcessorBehavior<,>),
             });
 
-            // Validators
-            RegisterCollection(container, typeof(IValidator<>), assemblies);
+            // Pipeline (Automatic)
+            //RegisterCollection(container, typeof(IPipelineBehavior<,>), assemblies);
 
-            // Processors 
-            RegisterCollection(container, typeof(IRequestPreProcessor<>), assemblies);
-            RegisterCollection(container, typeof(IRequestPostProcessor<,>), assemblies);
+            RegisterCollection(container, typeof(IValidator<>), assemblies); // Validators
+            RegisterCollection(container, typeof(IRequestPreProcessor<>), assemblies); // Pre Processors 
+            RegisterCollection(container, typeof(IRequestPostProcessor<,>), assemblies); // Post Processors 
 
             // Run it!
 
