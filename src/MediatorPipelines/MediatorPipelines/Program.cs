@@ -18,6 +18,7 @@ namespace MediatorPipelines
             var container = new Container();
             container.Register(() => new ServiceFactory(container.GetInstance), Lifestyle.Singleton);
 
+            // Assemblies to look for Handlers
             var assemblies = new[]
             {
                 typeof(IMediator).GetTypeInfo().Assembly,
@@ -39,22 +40,24 @@ namespace MediatorPipelines
                 typeof(RequestPostProcessorBehavior<,>),
             });
 
-            // Processors 
-            RegisterCollection(container, typeof(IRequestPreProcessor<>), assemblies);
-            RegisterCollection(container, typeof(IRequestPostProcessor<,>), assemblies);
-
             // Validators
             RegisterCollection(container, typeof(IValidator<>), assemblies);
 
-            container.Verify();
+            // Processors 
+            RegisterCollection(container, typeof(IRequestPreProcessor<>), assemblies);
+            RegisterCollection(container, typeof(IRequestPostProcessor<,>), assemblies);
 
             // Run it!
 
             var mediator = container.GetInstance<IMediator>();
 
+            // One Way Example
+
             var oneWayCommand = new OneWayCommand();
 
             await mediator.Send(oneWayCommand);
+
+            // Request-Response Example
 
             var ping = new Ping { Message = "Ping" };
 
