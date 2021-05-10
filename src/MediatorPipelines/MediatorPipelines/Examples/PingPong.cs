@@ -1,5 +1,4 @@
-﻿using FluentValidation;
-using MediatR;
+﻿using MediatR;
 using System;
 using System.Threading;
 using System.Threading.Tasks;
@@ -10,17 +9,6 @@ namespace MediatorPipelines
     public class Ping : IRequest<Pong>
     {
         public string Message { get; set; }
-    }
-
-    // Validator
-    public class PingValidator : AbstractValidator<Ping>
-    {
-        public PingValidator()
-        {
-            RuleFor(v => v.Message)
-                .MaximumLength(255)
-                .NotEmpty();
-        }
     }
 
     // Response

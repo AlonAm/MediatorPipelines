@@ -40,9 +40,6 @@ namespace MediatorPipelines
                 typeof(RequestPostProcessorBehavior<,>),
             });
 
-            // Pipeline (Automatic)
-            //RegisterCollection(container, typeof(IPipelineBehavior<,>), assemblies);
-
             RegisterCollection(container, typeof(IValidator<>), assemblies); // Validators
             RegisterCollection(container, typeof(IRequestPreProcessor<>), assemblies); // Pre Processors 
             RegisterCollection(container, typeof(IRequestPostProcessor<,>), assemblies); // Post Processors 
