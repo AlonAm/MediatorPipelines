@@ -18,7 +18,7 @@ namespace MediatorPipelines.Behaviors
 
         public async Task<TResponse> Handle(TRequest request, CancellationToken cancellationToken, RequestHandlerDelegate<TResponse> next)
         {
-            Console.WriteLine("Validating request");
+            Console.WriteLine("..Validating request");
 
             if (_validators.Any())
             {

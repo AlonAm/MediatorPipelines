@@ -9,7 +9,7 @@ namespace MediatorPipelines
     {
         public Task Process(TRequest request, TResponse response, CancellationToken cancellationToken)
         {
-            Console.WriteLine("..Post Processor");
+            Console.WriteLine("....Post Processor");
 
             return Task.CompletedTask;
         }

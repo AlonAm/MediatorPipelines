@@ -14,6 +14,31 @@ namespace MediatorPipelines
     {
         static async Task Main()
         {
+            var container = BuildContainer(); // Dependency Injection Container
+
+            // Run it!
+
+            var mediator = container.GetInstance<IMediator>();
+
+            // One Way Example
+
+            var oneWayCommand = new OneWayCommand();
+
+            await mediator.Send(oneWayCommand);
+
+            // Request-Response Example
+
+            var ping = new Ping { Message = "Ping" };
+
+            var pong = await mediator.Send(ping);
+
+            Console.WriteLine("Result: {0}", pong.Message); // "Ping Pong"
+
+            Console.ReadLine();
+        }
+
+        private static Container BuildContainer()
+        {
             // Dependency Injection
             var container = new Container();
             container.Register(() => new ServiceFactory(container.GetInstance), Lifestyle.Singleton);
@@ -44,25 +69,7 @@ namespace MediatorPipelines
             RegisterCollection(container, typeof(IRequestPreProcessor<>), assemblies); // Pre Processors 
             RegisterCollection(container, typeof(IRequestPostProcessor<,>), assemblies); // Post Processors 
 
-            // Run it!
-
-            var mediator = container.GetInstance<IMediator>();
-
-            // One Way Example
-
-            var oneWayCommand = new OneWayCommand();
-
-            await mediator.Send(oneWayCommand);
-
-            // Request-Response Example
-
-            var ping = new Ping { Message = "Ping" };
-
-            var pong = await mediator.Send(ping);
-
-            Console.WriteLine("Result: {0}", pong.Message); // "Ping Pong"
-
-            Console.ReadLine();
+            return container;
         }
 
         private static void RegisterCollection(Container container, Type collectionType, IReadOnlyCollection<Assembly> assemblies)

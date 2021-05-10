@@ -10,7 +10,7 @@ namespace MediatorPipelines
     {
         public Task Process(TRequest request, TResponse response, CancellationToken cancellationToken)
         {
-            Console.WriteLine("..Constrained Post Processor");
+            Console.WriteLine("....Constrained Post Processor");
 
             return Task.CompletedTask;
         }
