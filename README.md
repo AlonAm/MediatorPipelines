@@ -1,2 +1,3 @@
-# MediatorPipelines
-An example for Mediator Pipelines
+# Mediator Pipelines
+
+A simple Mediator Pipelines example using MediatR
